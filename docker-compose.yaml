@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  dl_db:
+    image: postgres:13.6
+    restart: always
+    networks:
+      - dl-network
+    environment:
+      - POSTGRES_USER=dl_service
+      - POSTGRES_PASSWORD=dl_service
+      - POSTGRES_DB=dl_service
+    ports:
+      - 15434:5432
+    volumes:
+      - ./data_ps:/var/lib/postgresql/data
+
+  dl_flyway:
+    image: flyway/flyway:latest
+    command: -configFiles=/flyway/conf/flyway.config -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    networks:
+      - dl-network
+    volumes:
+      - ${PWD}/src/main/resources/sql:/flyway/sql
+      - ${PWD}/docker-flyway.config:/flyway/conf/flyway.config
+    depends_on:
+      - dl_db
+
+networks:
+  dl-network:
+    driver: bridge

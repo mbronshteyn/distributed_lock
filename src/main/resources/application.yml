@@ -1,0 +1,11 @@
+server:
+  port: 12354
+redis:
+  host: ${REDIS.HOST}
+spring:
+  profiles:
+    active: jdbc
+  datasource:
+    url: jdbc:postgresql://${POSTGRES.HOST:localhost}:${POSTGRES.PORT:15434}/${POSTGRES.SCHEMA:dl_service}
+    username: dl_service
+    password: dl_service
